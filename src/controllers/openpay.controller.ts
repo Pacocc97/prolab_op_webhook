@@ -2,8 +2,12 @@ import { Request, Response } from "express";
 import { createCharge, getCharge } from "../services/openpay.service";
 import { createOrder } from "../services/order.service";
 import { config } from "../config";
+import { RequestHandler } from "express-serve-static-core";
 
-export async function createChargeController(req: Request, res: Response) {
+export const createChargeController: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const {
       method,
@@ -17,11 +21,11 @@ export async function createChargeController(req: Request, res: Response) {
 
     const { name, last_name, email } = customer;
     const { username, shippingCost, products } = order;
-
+    console.log("createChargeController", Math.ceil(amount * 100) / 100);
     const chargeRequest = {
       method: method || "card",
       source_id: sourceId,
-      amount,
+      amount: Math.ceil(amount * 100) / 100,
       description: description || "Compra desde Express con 3D Secure",
       device_session_id: deviceSessionId,
       use_3d_secure: true,
@@ -37,14 +41,13 @@ export async function createChargeController(req: Request, res: Response) {
         email,
       },
     };
-
     const charge = await createCharge(chargeRequest);
-    return res.json(charge);
+    res.json(charge);
   } catch (error) {
     console.error("Error al crear cargo:", error);
-    return res.status(500).json({ error: "Error interno al crear cargo" });
+    res.status(500).json({ error: "Error interno al crear cargo" });
   }
-}
+};
 
 export async function openPayCallbackController(req: Request, res: Response) {
   try {

@@ -10,12 +10,16 @@ export function createApp(): Application {
 
   // CORS
   const corsOptions = {
-    origin: config.allowedOrigins,
+    // origin: config.allowedOrigins,
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
   };
-  app.use(cors(corsOptions));
+  app.use(
+    cors()
+    // corsOptions
+  );
 
   // Logs
   app.use(loggerMiddleware);
