@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { createCharge, getCharge } from "../services/openpay.service";
 import { createOrder } from "../services/order.service";
+import { sendMail } from "../services/mail.service";
+
 import { config } from "../config";
 import { RequestHandler } from "express-serve-static-core";
 
@@ -101,6 +103,17 @@ export async function openPayCallbackController(req: Request, res: Response) {
         throw new Error(
           "La respuesta de createOrder no contiene el número de la orden."
         );
+      }
+
+      try {
+        await sendMail({
+          username: username,
+          numero: String(data.number),
+          asunto: "Compra realizada con éxito",
+          bandera: "A",
+        });
+      } catch (mailError) {
+        console.error("Error al enviar el correo:", mailError);
       }
 
       // Redirigir al usuario a la página de resumen de la orden
