@@ -6,13 +6,13 @@ dotenv.config();
 
 export const config = {
   port: process.env.PORT || "5005",
-  allowedOrigins: (process.env.ALLOWED_ORIGINS || "").split(","),
+  allowedOrigins: (process.env.ALLOWED_ORIGINS || "*").split(","),
   openpay: {
     // merchantId: process.env.OPENPAY_MERCHANT_ID || "mkk673wuxmi4xvii20cf",
-    merchantId: process.env.OPENPAY_MERCHANT_ID || "mzf9mmojexntfllthzal",
+    merchantId: process.env.OPENPAY_MERCHANT_ID || "my8wzu8jkspx06fahw8t",
     privateKey:
       // process.env.OPENPAY_PRIVATE_KEY || "sk_3c78be60065d4f89ab1eb7ef2a060ac7",
-      process.env.OPENPAY_PRIVATE_KEY || "sk_09565b022fd8461698de06e6bdc2a67a",
+      process.env.OPENPAY_PRIVATE_KEY || "sk_39c3d70d50e642f583ce6207d8edd2fe",
     production: process.env.OPENPAY_PRODUCTION_MODE === "false",
   },
   urls: {
@@ -23,6 +23,7 @@ export const config = {
     frontUrl: process.env.FRONT_URL || "http://localhost:5173",
     baseUrl:
       // process.env.BASE_URL || "https://prolab.adaflex.mx/datasnap/rest/TSMREST",
-      process.env.BASE_URL || "https://srv01.adaflex.mx/datasnap/rest/TSMREST",
+      process.env.BASE_URL ||
+      "https://labtech.grupoxic.net/datasnap/rest/TSMREST",
   },
 };
