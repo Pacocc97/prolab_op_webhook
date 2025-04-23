@@ -19,13 +19,12 @@ export const config = {
     backUrl:
       // process.env.BACK_URL || "https://prolab.adaflex.mx/webhook/openpay",
       process.env.BACK_URL || "http://localhost:5005/openpay",
-    // frontUrl: process.env.FRONT_URL || "http://localhost:3000",
     frontUrl: process.env.FRONT_URL || "http://localhost:5173",
     baseUrl:
       // process.env.BASE_URL || "https://prolab.adaflex.mx/datasnap/rest/TSMREST",
+      // process.env.BASE_URL ||
+      // "https://srv01.adaflex.mx:4430/datasnap/rest/TSMREST",
       process.env.BASE_URL ||
-      "https://srv01.adaflex.mx:4430/datasnap/rest/TSMREST",
-    // process.env.BASE_URL ||
-    // "https://labtech.grupoxic.net/datasnap/rest/TSMREST",
+      "https://labtech.grupoxic.net/datasnap/rest/TSMREST",
   },
 };
