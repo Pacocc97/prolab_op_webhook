@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { config } from "../config";
 
 export interface OrderBody {
@@ -8,7 +8,14 @@ export interface OrderBody {
   products: any[];
 }
 
-export async function createOrder(body: OrderBody): Promise<any> {
-  const response = await axios.post(`${config.urls.baseUrl}/NewOrder`, body);
+export async function createOrder(
+  body: OrderBody,
+  options?: AxiosRequestConfig
+): Promise<any> {
+  const response = await axios.post(
+    `${config.urls.baseUrl}/NewOrder`,
+    body,
+    options
+  );
   return response.data;
 }

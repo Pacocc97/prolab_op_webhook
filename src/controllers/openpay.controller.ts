@@ -16,7 +16,7 @@ export const createChargeController = async (req: Request, res: Response) => {
       amount,
       customer,
       order,
-      enable3DS, // <-- nuevo
+      enable3DS,
     } = req.body;
 
     const { name, last_name, email } = customer;
@@ -29,27 +29,19 @@ export const createChargeController = async (req: Request, res: Response) => {
       amount: Math.ceil(amount * 100) / 100,
       description: description || "Compra desde Express con 3D Secure",
       device_session_id: deviceSessionId,
-      metadata: {
-        username,
-        shippingCost,
-        products,
-      },
-      customer: {
-        name,
-        last_name,
-        email,
-      },
+      metadata: { username, shippingCost, products },
+      customer: { name, last_name, email },
     };
 
-    // Activar 3DS por defecto, a menos que explícitamente sea false
     if (enable3DS !== false) {
       chargeRequest.use_3d_secure = true;
       chargeRequest.redirect_url = `${config.urls.backUrl}/callback`;
     }
 
+    console.time("Crear cargo");
     const charge = await createCharge(chargeRequest);
-    // console.log("Cargo creado:", charge);
-    // console.log("enable3DS", enable3DS);
+    console.timeEnd("Crear cargo");
+
     if (enable3DS === false && charge.status === "completed") {
       const orderBody = {
         username,
@@ -59,37 +51,37 @@ export const createChargeController = async (req: Request, res: Response) => {
           typeof products === "string" ? JSON.parse(products) : products,
       };
 
+      console.log("Intentando crear orden con:", orderBody);
+
+      let data;
+      console.time("Crear orden");
       try {
-        console.log("Intentando crear orden con:", orderBody);
-        const data = await createOrder(orderBody);
-        console.log("Orden creada:", data);
-
-        console.log("Enviando correo de confirmación con número:", data.number);
-        try {
-          await sendMail({
-            username: username,
-            numero: String(data.number),
-            asunto: "Compra realizada con éxito",
-            bandera: "A",
-          });
-        } catch (mailError) {
-          console.error("Error al enviar el correo:", mailError);
-        }
-
-        res.json({
-          charge,
-          order: data,
-        });
-        return;
+        data = await createOrder(orderBody, { timeout: 10000 });
       } catch (createError) {
         console.error("Error al crear la orden:", createError);
         res.status(500).json({ error: "Error al crear la orden" });
-        return;
       }
+      console.timeEnd("Crear orden");
+
+      // Disparamos el correo sin bloquear el flujo
+      console.time("Enviar correo");
+      sendMail({
+        username: username,
+        numero: String(data.number),
+        asunto: "Compra realizada con éxito",
+        bandera: "A",
+      }).catch((mailError) => {
+        console.error("Error al enviar el correo:", mailError);
+      });
+      console.timeEnd("Enviar correo");
+
+      res.json({
+        charge,
+        order: data,
+      });
     }
 
     res.json({ charge });
-    return;
   } catch (error) {
     console.error("Error al crear cargo:", error);
     res.status(500).json({ error: "Error interno al crear cargo" });
