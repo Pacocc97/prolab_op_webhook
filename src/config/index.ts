@@ -25,6 +25,7 @@ export const config = {
       // process.env.BASE_URL ||
       // "https://srv01.adaflex.mx:4430/datasnap/rest/TSMREST",
       process.env.BASE_URL ||
-      "https://labtech.grupoxic.net/datasnap/rest/TSMREST",
+      // "https://labtech.grupoxic.net/datasnap/rest/TSMREST",
+      "http://localhost:8443/datasnap/rest/TSMREST",
   },
 };
