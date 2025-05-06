@@ -37,7 +37,12 @@ export const createChargeController = async (req: Request, res: Response) => {
       chargeRequest.use_3d_secure = true;
       chargeRequest.redirect_url = `${config.urls.backUrl}/callback`;
     }
-
+    if (!sourceId) {
+      res
+        .status(400)
+        .json({ error: "No se recibió el token de tarjeta (source_id)" });
+    }
+    console.log("Token recibido (source_id):", sourceId);
     console.time("Crear cargo");
     const charge = await createCharge(chargeRequest);
     console.timeEnd("Crear cargo");
@@ -79,9 +84,9 @@ export const createChargeController = async (req: Request, res: Response) => {
         charge,
         order: data,
       });
+    } else {
+      res.json({ charge });
     }
-
-    res.json({ charge });
   } catch (error) {
     console.error("Error al crear cargo:", error);
     res.status(500).json({ error: "Error interno al crear cargo" });
